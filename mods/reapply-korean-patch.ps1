@@ -47,6 +47,60 @@ function Restore-IfMissing($relPath) {
     }
 }
 
+# ── 온라인 번역 업데이트 (선택 / best-effort) ────────────
+# 공개 배포처(GitHub)의 번역 JS만 받아 로컬과 다르면 교체. 폰트는 대상 아님.
+$RawBase = 'https://raw.githubusercontent.com/shlifedev/RogueFable-IV-Localization/main/mods'
+
+# 다운로드본이 올바른 JS인지 확인 (404 HTML/빈 파일이 로컬을 덮어쓰는 것 방지)
+function Test-Download($file, $name) {
+    if (-not (Test-Path $file)) { return $false }
+    if ((Get-Item $file).Length -le 0) { return $false }
+    $head = Get-Content $file -TotalCount 1 -ErrorAction SilentlyContinue
+    if ($head -and $head.TrimStart().StartsWith('<')) { return $false }   # HTML 오류 페이지
+    switch ($name) {
+        'ko.js'   { if (-not (Select-String -Path $file -Pattern 'window.KO' -Quiet)) { return $false } }
+        'i18n.js' { if (-not (Select-String -Path $file -Pattern 'Galmuri'   -Quiet)) { return $false } }
+    }
+    return $true
+}
+
+function Invoke-OnlineUpdate($modsDir) {
+    try { [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12 } catch {}
+    $updated = @()
+    $failed  = $false
+    foreach ($f in @('ko.js', 'i18n.js', 'cheat-menu.js')) {
+        $localPath = Join-Path $modsDir $f
+        $tmp = [IO.Path]::GetTempFileName()
+        try {
+            Invoke-WebRequest -Uri "$RawBase/$f" -OutFile $tmp -UseBasicParsing -TimeoutSec 15 -ErrorAction Stop
+        } catch {
+            Write-Warn "$f 내려받기 실패 (네트워크/서버)"
+            $failed = $true; Remove-Item $tmp -ErrorAction SilentlyContinue; continue
+        }
+        if (-not (Test-Download $tmp $f)) {
+            Write-Warn "$f 응답이 올바르지 않아 건너뜁니다."
+            $failed = $true; Remove-Item $tmp -ErrorAction SilentlyContinue; continue
+        }
+        $same = $false
+        if (Test-Path $localPath) {
+            $same = ((Get-FileHash $tmp).Hash -eq (Get-FileHash $localPath).Hash)
+        }
+        if ($same) { Remove-Item $tmp -ErrorAction SilentlyContinue; continue }
+        if (Test-Path $localPath) { Copy-Item $localPath "$localPath.bak" -Force }
+        Copy-Item $tmp $localPath -Force          # 다운로드본(UTF-8) 그대로 교체
+        Remove-Item $tmp -ErrorAction SilentlyContinue
+        $updated += $f
+    }
+
+    if ($updated.Count -gt 0) {
+        Write-Ok ("번역을 최신으로 업데이트했습니다: " + ($updated -join ', '))
+    } elseif ($failed) {
+        Write-Warn "일부 파일을 받지 못했습니다. 기존 번역으로 진행합니다."
+    } else {
+        Write-Ok "이미 최신 번역입니다."
+    }
+}
+
 # ── 본 작업 ──────────────────────────────────────────────
 $exitCode = 0
 try {
@@ -64,8 +118,19 @@ try {
 		<script src='../mods/i18n.js'></script>
 "@
 
-    # [1/2] 패치 파일 확인
-    Write-Step 1 2 "한글패치 파일 확인 중..."
+    # [1/3] 최신 한글 번역 확인 (선택 / 기본=건너뜀)
+    Write-Step 1 3 "최신 한글 번역 확인 (선택)"
+    $ans = ''
+    try { $ans = Read-Host "        인터넷에서 최신 한글 번역을 확인할까요? (y/N)" } catch { $ans = '' }
+    if ($ans -match '^(y|yes)$') {
+        try { Invoke-OnlineUpdate $patchDir } catch { Write-Warn "업데이트 중 문제가 발생해 건너뜁니다. 기존 번역으로 진행합니다." }
+    } else {
+        Write-Ok "포함된 번역으로 진행합니다."
+    }
+    Start-Sleep -Milliseconds 250
+
+    # [2/3] 패치 파일 확인
+    Write-Step 2 3 "한글패치 파일 확인 중..."
     Start-Sleep -Milliseconds 250
     Restore-IfMissing 'mods/i18n.js'
     Restore-IfMissing 'mods/ko.js'
@@ -74,8 +139,8 @@ try {
     Write-Ok "패치 파일 준비 완료"
     Start-Sleep -Milliseconds 350
 
-    # [2/2] 게임(index.html)에 연결
-    Write-Step 2 2 "게임에 한글패치 연결 중..."
+    # [3/3] 게임(index.html)에 연결
+    Write-Step 3 3 "게임에 한글패치 연결 중..."
     Start-Sleep -Milliseconds 250
     if (-not (Test-Path $index)) {
         throw "게임의 index.html을 찾을 수 없습니다. mods 폴더를 게임 설치 폴더 안에 두었는지 확인해 주세요.`n      ($index)"
