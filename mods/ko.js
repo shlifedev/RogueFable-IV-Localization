@@ -121,7 +121,7 @@ window.KO = {
 	"By:": "제작:",
 	"Tutorial": "튜토리얼",
 	"Advanced Tactics": "고급 전술",
-	"Test Levels": "테스트 레벨",
+	"Test Levels": "레벨 테스트",
 
 	// 게임 메뉴(인게임)
 	"Game Menu": "게임 메뉴",
