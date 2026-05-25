@@ -1,0 +1,77 @@
+name: Release Localization
+
+# main 에 push 될 때마다 mods 폴더를 압축해 릴리즈 페이지에 업로드합니다.
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+# gh CLI 로 릴리즈/태그를 생성하려면 쓰기 권한이 필요합니다.
+permissions:
+  contents: write
+
+# 동시에 여러 워크플로우가 돌면 태그 번호가 충돌할 수 있으므로 직렬화합니다.
+concurrency:
+  group: release-localization
+  cancel-in-progress: false
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          # 같은 날짜의 기존 태그 개수를 세려면 모든 태그가 필요합니다.
+          fetch-depth: 0
+
+      - name: Build zip
+        run: |
+          # 압축 해제 시 mods/ 폴더가 그대로 나오도록 폴더째 압축합니다.
+          zip -r rougue-fable-iv-localization.zip mods
+
+      - name: Compute version tag
+        id: tag
+        run: |
+          git fetch --tags --force
+          DATE=$(date +'%Y.%m.%d')
+          # 같은 날짜로 만들어진 기존 태그 수를 세어 +1 한 값을 고유번호로 사용합니다.
+          COUNT=$(git tag -l "v${DATE}-*" | wc -l | tr -d ' ')
+          SEQ=$((COUNT + 1))
+          TAG="v${DATE}-${SEQ}"
+          echo "date=${DATE}" >> "$GITHUB_OUTPUT"
+          echo "tag=${TAG}" >> "$GITHUB_OUTPUT"
+          echo "생성할 태그: ${TAG}"
+
+      - name: Create dated release
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TAG: ${{ steps.tag.outputs.tag }}
+          DATE: ${{ steps.tag.outputs.date }}
+          SHA: ${{ github.sha }}
+        run: |
+          gh release create "$TAG" \
+            rougue-fable-iv-localization.zip \
+            --title "$TAG" \
+            --target "$SHA" \
+            --notes "Rogue Fable IV 한글 패치 - ${DATE} 빌드
+          commit: ${SHA}"
+
+      - name: Update latest release
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TAG: ${{ steps.tag.outputs.tag }}
+          DATE: ${{ steps.tag.outputs.date }}
+          SHA: ${{ github.sha }}
+        run: |
+          # 고정 다운로드 링크(releases/download/latest/...)를 유지하기 위해
+          # latest 릴리즈를 지우고 현재 빌드로 다시 만듭니다.
+          gh release delete latest --yes --cleanup-tag || true
+          gh release create latest \
+            rougue-fable-iv-localization.zip \
+            --title "Latest ($TAG)" \
+            --target "$SHA" \
+            --latest \
+            --notes "항상 최신 한글 패치입니다.
+
+          현재 버전: ${TAG} (${DATE})"
