@@ -38,7 +38,9 @@ Rogue Fable IV 비공식 한글 번역 패치입니다.
 
 ## 번역에 기여하기
 
-게임을 플레이하는도중 번역되지 않는 스트링은 자동으로 수집됩니다.
+게임을 플레이하는도중 번역되지 않고 영어로 표시되는 텍스트들은 `Untranslated/Untranslated.json` 에 자동으로 수집됩니다.
+
+번역 방식 특성상 불필요한 텍스트도 포함되어있으나 필터링 가능하므로 원본 그대로 공유해주세요!
 
 1. [여기](https://github.com/shlifedev/RogueFable-IV-Localization/issues) 를 누른 후 `Untranslated Report` 버튼을 눌러주세요
 
