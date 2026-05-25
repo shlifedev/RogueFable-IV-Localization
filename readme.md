@@ -7,6 +7,8 @@ Rogue Fable IV 비공식 한글 번역 패치입니다.
 
 ## 패치 방법 (Windows)
 
+패치파일은 [release](https://github.com/shlifedev/RogueFable-IV-Localization/releases/tag/latest) 에 압축파일로 있습니다. 미리 풀어주세요
+
 1. Steam 라이브러리에서 **Rogue Fable IV** 우클릭 → **관리 → 로컬 파일 보기**. (게임 설치 폴더가 열립니다.)
 
 2. 받은 **`mods` 폴더**를 그 게임 폴더 안에 통째로 복사합니다.
@@ -20,7 +22,12 @@ Rogue Fable IV 비공식 한글 번역 패치입니다.
 
 ## 패치 방법 (MacOS)
 
-작성 예정.
+1. Rogue Fable IV.app 우클릭  -> 패키지 내용 보기  
+2. `Contents/Resources/app.nw` 에 `mods` 폴더 복사  
+3. **`reapply-korean-patch.command`** 더블클릭
+4. 4. 게임을 실행하면 한글이 나옵니다. (게임 안에서 **F9** 키로 치트 메뉴도 열 수 있습니다.)
+
+
 
 
 ## 번역에 기여하기
