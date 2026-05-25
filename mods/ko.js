@@ -3197,4 +3197,42 @@ window.KO = {
 	"Mana Osmosis, Leech Sigils, Sorcerous Sustainability Reports.": "마나 삼투, 흡수 인장, 마법적 지속가능성 보고서.",
 	"Spell Misfire Logs, Incantation Compliance Forms, Mana Expenditure Charts.": "주문 오발 기록, 주문 영창 준수 양식, 마나 지출 도표.",
 
+	// 잔여 고유명/표지 (gitea PR 사이클 3)
+	// 옌도르 그림 제목 (#Painting)
+	"Yendor the Conqueror of Time": "시간의 정복자 옌도르",
+	"The Birth of Yendor": "옌도르의 탄생",
+	"Graduation Day": "졸업식 날",
+	"Bliss": "지복",
+	"Yendor at the Crossroads": "갈림길의 옌도르",
+	"The Duel": "결투",
+	"Yendor: King of Everything": "옌도르: 만물의 왕",
+	"Long Weekend": "긴 주말",
+	"Dominion": "지배",
+	"Happy Days": "행복한 나날",
+	"Yendor Wrestles the Moon": "달과 씨름하는 옌도르",
+	"The Ascension": "승천",
+	"Taming": "길들이기",
+	"Victory of Order": "질서의 승리",
+	"Leap of Faith": "신념의 도약",
+	"Drive": "투지",
+	"Vision": "비전",
+	"On Trial": "심판대 위에서",
+	"Self Portrait of a Portrait": "초상화의 자화상",
+	"There Were Always Two Scissors": "가위는 언제나 둘이었다",
+	// 표지/쪽지 라벨 및 보스 쪽지(#GuardRoomBoss)
+	"Menu:": "메뉴:",
+	"I want you all on high alert! There's another one of those pesky adventurers running about.": "전원 비상경계 태세를 유지하라! 그 성가신 모험가 놈들 중 또 하나가 돌아다니고 있다.",
+	"- Yendor The Vengeful": "- 복수의 옌도르",
+	// 표시되는 지형 (tileTypes)
+	"Floor Grate": "바닥 격자",
+	"Mud": "진흙",
+	"Path": "길",
+	"Slope": "경사면",
+	"Toxic Waste": "유독 폐기물",
+	// 표시되는 오브젝트 (objectTypes)
+	"IceBlock": "얼음 블록",
+	"SkullStatue": "해골 조각상",
+	"Stone Blocks": "돌 블록",
+	"StoneBlock": "돌 블록",
+	"CryptGasLamp": "납골당 가스등"
 };
