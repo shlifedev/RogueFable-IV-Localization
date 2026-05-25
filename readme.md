@@ -1,5 +1,7 @@
 # Rogue Fable IV 한글 패치
 
+![Hits](https://hits.seeyoufarm.com/api/count/incr/badge.svg?url=https%3A%2F%2Fgithub.com%2Fshlifedev%2FRogueFable-IV-Localization&count_bg=%2379C83D&title_bg=%23555555&title=visitors&edge_flat=false)
+
 Rogue Fable IV 비공식 한글 번역 패치입니다. 
 
 - F9 메뉴를 누르면 게임 디버그 도구를 쉽게 사용할 수 있습니다. (기존 F10 + console)
